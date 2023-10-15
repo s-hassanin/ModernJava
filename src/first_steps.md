@@ -4,15 +4,17 @@ If you made it through the [Getting Started section](./getting_started/hello_wor
 
 ~IF toplevel_anonymous_class
 
-```java
-void main() {
-    System.out.println("Hello, World!");
+```java,playground
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
 }
 ```
 
 ~ELSE
 
-```java
+```java,playground
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello, World!");

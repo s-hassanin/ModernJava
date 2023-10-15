@@ -54,7 +54,7 @@
 }
 
 .coal {
-  --bg: hsl(200, 7%, 8%);
+  --bg: hsl(210, 20%, 98%);
   --fg: #98a3ad;
 
   --sidebar-bg: #292c2f;
@@ -110,7 +110,7 @@
 
   --links: #20609f;
 
-  --inline-code-color: #301900;
+  --inline-code-color: #fffcf9;
 
   --theme-popup-bg: #fafafa;
   --theme-popup-border: #cccccc;

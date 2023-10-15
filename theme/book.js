@@ -29,7 +29,7 @@ function playground_text(playground, hidden = true) {
 
   var playgrounds = Array.from(document.querySelectorAll(".playground"));
   if (playgrounds.length > 0) {
-    fetch_with_timeout("https://play.rust-lang.org/meta/crates", {
+    fetch_with_timeout("https://java-playground.com/meta/crates", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -65,7 +65,7 @@ function playground_text(playground, hidden = true) {
             win: "Ctrl-Enter",
             mac: "Ctrl-Enter",
           },
-          exec: (_editor) => run_rust_code(playground_block),
+          exec: (_editor) => run_java_code(playground_block),
         });
       }
     }
@@ -103,7 +103,22 @@ function playground_text(playground, hidden = true) {
     }
   }
 
-  function run_rust_code(code_block) {
+  // Function to handle displaying the response
+function displayResponse(response) {
+  const resultBlock = document.querySelector(".result");
+  if (response && response.result !== undefined) {
+    if (response.result.trim() === "") {
+      resultBlock.innerText = "No output";
+      resultBlock.classList.add("result-no-output");
+    } else {
+      resultBlock.innerText = response.result;
+      resultBlock.classList.remove("result-no-output");
+    }
+  } else {
+    resultBlock.innerText = "Response or response.result is undefined";
+  }
+}
+  function run_java_code(code_block) {
     var result_block = code_block.querySelector(".result");
     if (!result_block) {
       result_block = document.createElement("code");
@@ -121,10 +136,11 @@ function playground_text(playground, hidden = true) {
       edition = "2021";
     }
     var params = {
-      version: "stable",
-      optimize: "0",
       code: text,
-      edition: edition,
+      action: "run",
+      preview: true,
+      release: 21,
+      runtime: "latest"
     };
 
     if (text.indexOf("#![feature") !== -1) {
@@ -133,7 +149,7 @@ function playground_text(playground, hidden = true) {
 
     result_block.innerText = "Running...";
 
-    fetch_with_timeout("https://play.rust-lang.org/evaluate.json", {
+    fetch_with_timeout("https://java-playground.com/execute", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -141,14 +157,25 @@ function playground_text(playground, hidden = true) {
       mode: "cors",
       body: JSON.stringify(params),
     })
-      .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+      // .then((response) => response.json())
       .then((response) => {
-        if (response.result.trim() === "") {
-          result_block.innerText = "No output";
-          result_block.classList.add("result-no-output");
-        } else {
-          result_block.innerText = response.result;
-          result_block.classList.remove("result-no-output");
+        if (response && response.result !== undefined) {
+          if (response.result.trim() === "") {
+            result_block.innerText = "No output";
+            result_block.classList.add("result-no-output");
+          } else {
+            result_block.innerText = response.result;
+            result_block.classList.remove("result-no-output");
+          }
+        }
+        else {
+          result_block.innerText = "Response or response.result is undefined";
         }
       })
       .catch(
@@ -263,9 +290,9 @@ function playground_text(playground, hidden = true) {
   }
 
   // Process playground code blocks
-  Array.from(document.querySelectorAll(".playground")).forEach(
-    function (pre_block) {
-      // Add play button
+  Array.from(document.querySelectorAll(".playground")).forEach( function (pre_block) {
+      
+    // Add play button
       var buttons = pre_block.querySelector(".buttons");
       if (!buttons) {
         buttons = document.createElement("div");
@@ -281,7 +308,7 @@ function playground_text(playground, hidden = true) {
 
       buttons.insertBefore(runCodeButton, buttons.firstChild);
       runCodeButton.addEventListener("click", function (e) {
-        run_rust_code(pre_block);
+        run_java_code(pre_block);
       });
 
       if (window.playground_copyable) {
